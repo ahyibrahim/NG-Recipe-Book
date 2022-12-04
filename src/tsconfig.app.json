@@ -6,6 +6,10 @@
   },
   "exclude": [
     "test.ts",
-    "**/*.spec.ts"
-  ]
+    "**/*.spec.ts",
+
+  ],
+  "angularCompilerOptions": {
+    "allowSyntheticDefaultImports": true
+  }
 }
