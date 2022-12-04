@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, catchError, tap, throwError} from "rxjs";
 import {User} from "./user.model";
 import {Router} from "@angular/router";
+import {environment} from "../../environments/environment";
 
 export interface AuthResponseData{
   kind: string;
@@ -21,7 +22,6 @@ export class AuthService {
   user = new BehaviorSubject<User>(null);
   private expirationTimeout: any;
 
-  private API_KEY: string = 'AIzaSyATws7VlzVEG2CFY6uPdOTHpBglUexBSps'
   private SIGNUP_URL: string = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='
   private LOGIN_URL = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='
 
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   signUp(user: { email: string, password: string }){
-    return this.http.post<AuthResponseData>(this.SIGNUP_URL.concat(this.API_KEY),
+    return this.http.post<AuthResponseData>(this.SIGNUP_URL.concat(environment.FIREBASE_API_KEY),
       {
         ...user,
         returnSecureToken: true
@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   signIn(user: {email: string, password: string}){
-    return this.http.post<AuthResponseData>(this.LOGIN_URL.concat(this.API_KEY),
+    return this.http.post<AuthResponseData>(this.LOGIN_URL.concat(environment.FIREBASE_API_KEY),
       {
         ...user,
         returnSecureToken: true
