@@ -1,6 +1,11 @@
 import {Ingredient} from "../../shared/ingredient.model";
 import * as ShoppingListActions from "./shopping-list.actions";
-import {DELETE_INGREDIENT, UPDATE_INGREDIENT} from "./shopping-list.actions";
+import {DELETE_INGREDIENT, START_EDIT, UPDATE_INGREDIENT} from "./shopping-list.actions";
+
+
+export interface AppState {
+  shoppingList: State
+}
 
 export interface State{
   ingredients: Ingredient[],
@@ -31,25 +36,40 @@ export function shoppingListsReducer(
         ...state,
         ingredients: [...state.ingredients, ...action.payload]
       };
-    case UPDATE_INGREDIENT:
-      const ingredient = state.ingredients[action.payload.id];
+    case ShoppingListActions.UPDATE_INGREDIENT:
+      const ingredient = state.ingredients[state.editedIngredientIndex];
       const updatedIngredient = {
         ...ingredient,
-        ...action.payload.ingredient
+        ...action.payload
       };
       const updatedIngredients = [...state.ingredients];
-      updatedIngredients[action.payload.id] = updatedIngredient;
+      updatedIngredients[state.editedIngredientIndex] = updatedIngredient;
       return {
         ...state,
-        ingredients: updatedIngredients
+        ingredients: updatedIngredients,
+        editedIngredient: null,
+        editedIngredientIndex: -1
+
       };
-    case DELETE_INGREDIENT:
+    case ShoppingListActions.DELETE_INGREDIENT:
       return {
         ...state,
         ingredients: state.ingredients.filter((ig, index) => {
-          return index !== action.payload
+          return index !== state.editedIngredientIndex;
         })
       }
+    case ShoppingListActions.START_EDIT:
+      return {
+          ...state,
+        editedIngredient: state.ingredients[action.payload],
+        editedIngredientIndex: action.payload
+      };
+    case ShoppingListActions.STOP_EDIT:
+      return {
+        ...state,
+        editedIngredient: null,
+        editedIngredientIndex: -1
+      };
     default:
       return state;
   }
